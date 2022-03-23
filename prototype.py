@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
 from dataclasses import dataclass
-import yaml
+from os import system
 from random import shuffle
 import re
 from typing import List, Tuple
+import yaml
 
 
 LABELS = ["A", "B", "C", "D", "E", "F"]
@@ -30,10 +31,11 @@ class Sprint:
         bank = [Parser.prepare_question(_q) for _q in Parser.read_qfile(fpath)]
         shuffle(bank)
         self.questions = bank[:20]
-
+    
     def run(self):
-        for _i, _q in enumerate(self.questions):
-            print(f"\n\n{_i + 1} / 20 -------------------\n")
+        for _q in self.questions:
+            self.view.clear()
+            self.view.qheader(self.marks)
             self.view.display(_q)
             user_answer = self.view.prompt(_q)
             if _q.check(user_answer):
@@ -50,7 +52,10 @@ class Sprint:
 
 class CliQuizView:
 
-    def display(self, _q):
+    def clear(self) -> None:
+        system("clear")
+
+    def display(self, _q) -> None:
         print(f"{_q.question}\n\n===\n")
         if _q.choices:
             for _i, choice in enumerate(_q.choices):
@@ -72,11 +77,11 @@ class CliQuizView:
             answer.sort()
             return answer
 
-    def respond_correct(self):
-        print("That is correct! Keep studying.")
+    def respond_correct(self) -> None:
+        print("\nThat is correct! Keep studying.")
 
-    def respond_incorrect(self, _q):
-        print("That is not correct! You are great disappoint.")
+    def respond_incorrect(self, _q) -> None:
+        print("\nThat is not correct! You are great disappoint.")
         if _q.qtype == "provide":
             print(f"The correct answer is: {_q['Correct']}")
         elif _q.qtype == "choose":
@@ -86,7 +91,21 @@ class CliQuizView:
         print(f"You got {n_correct} / 20 questions correct. Score: {score}")
 
     def advance_prompt(self) -> None:
-        input("Press enter for the next question.")
+        input("\n\nPress enter for the next question.")
+
+    # TODO
+    def display_marks(self, marks: List[int]) -> str:
+        marks_display = ""
+        for _i in marks:
+            marks_display += "+" if _i else "·"
+        while len(marks_display) < 20:
+            marks_display += "-"
+        return marks_display
+
+    def qheader(self, marks: List[int]) -> None:
+        qnum = len(marks) + 1
+        marks = self.display_marks(marks)
+        print(f"\nQuestion {qnum} / 20 |  {marks}\n")
 
 class Parser:
 
