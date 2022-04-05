@@ -40,3 +40,74 @@ class ParserNormalization(unittest.TestCase):
     def testNormalizeAlreadyNormalChooseMultiQDict(self):
         qdict = {"Question":"", "Correct": ["ans1", "ans2"], "Incorrect": ["ans3", "ans4"]}
         self.assertDictEqual(qdict, self.parser.normalize_qdict(qdict))
+
+class ParserQuestionType(unittest.TestCase):
+
+    def setUp(self):
+        self.parser = Parser()
+
+    def testQTypeBooleanCorrectOnlyTrue(self):
+        qdict = {"Question":"", "Correct": ["True"], "Incorrect": []}
+        self.assertEqual("boolean", self.parser.question_type(qdict))
+
+    def testQTypeBooleanCorrectOnlyFalse(self):
+        qdict = {"Question":"", "Correct": ["False"], "Incorrect": []}
+        self.assertEqual("boolean", self.parser.question_type(qdict))
+        
+    def testQTypeBooleanTrueFalse(self):
+        qdict = {"Question":"", "Correct": ["True"], "Incorrect": ["False"]}
+        self.assertEqual("boolean", self.parser.question_type(qdict))
+        
+    def testQTypeBooleanFalseTrue(self):
+        qdict = {"Question":"", "Correct": ["False"], "Incorrect": ["True"]}
+        self.assertEqual("boolean", self.parser.question_type(qdict))
+    
+    def testQTypeProvide(self):
+        qdict = {"Question":"", "Correct": ["Somthing something something"], "Incorrect": []}
+        self.assertEqual("provide", self.parser.question_type(qdict))
+
+    def testQTypeChoose(self):
+        qdict = {"Question":"", "Correct": ["ans1"], "Incorrect": ["ans2", "ans3"]}
+        self.assertEqual("choose", self.parser.question_type(qdict))
+        
+    def testQTypeChooseMulti(self):
+        qdict = {"Question":"", "Correct": ["ans1", "ans2"], "Incorrect": ["ans3", "ans4"]}
+        self.assertEqual("choose", self.parser.question_type(qdict))
+
+    def testQTypeChooseMultiAllCorrect(self):
+        qdict = {"Question":"", "Correct": ["ans1", "ans2"], "Incorrect": []}
+        self.assertEqual("choose", self.parser.question_type(qdict))
+
+
+class ParserPrepareBooleanQuestion(unittest.TestCase):
+
+    def setUp(self):
+        parser = Parser()
+        qdict = {"Question":"Shoes before pants.", "Correct": ["True"], "Incorrect": []}
+        self.q = parser.prepare_question(qdict, "boolean")
+
+    def testPrepareQsBooleanQuestionAttr(self):
+        self.assertEqual("Shoes before pants.", self.q.question)
+
+    def testPrepareQsBooleanCorrectAttr(self):
+        self.assertEqual(["True"], self.q.correct)
+
+    def testPrepareQsBooleanChoicesAttr(self):
+        self.assertEqual(["True", "False"], self.q.choices)
+
+
+class ParserPrepareProvideQuestion(unittest.TestCase):
+
+    def setUp(self):
+        parser = Parser()
+        qdict = {"Question":"Shoes _____ pants.", "Correct": ["before"], "Incorrect": []}
+        self.q = parser.prepare_question(qdict, "provide")
+
+    def testPrepareQsBooleanQuestionAttr(self):
+        self.assertEqual("Shoes _____ pants.", self.q.question)
+
+    def testPrepareQsBooleanCorrectAttr(self):
+        self.assertEqual(["before"], self.q.correct)
+
+    def testPrepareQsBooleanChoicesAttr(self):
+        self.assertEqual([], self.q.choices)
