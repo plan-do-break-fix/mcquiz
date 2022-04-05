@@ -4,10 +4,8 @@ from random import shuffle
 from typing import List, Tuple
 import yaml
 
-from app.Components import Question
+from Components import Question, LABELS
 
-
-LABELS = ["A", "B", "C", "D", "E", "F"]
 
 class Parser:
 
@@ -33,7 +31,8 @@ class Parser:
             correct_choices = [(1, _i) for _i in qdict["Correct"]]
         incorrect_choices = [(0, _i) for _i in qdict["Incorrect"]]
         choices = correct_choices + incorrect_choices
-        shuffle(choices)
+        if "shuffle" not in qdict.keys() or qdict["shuffle"] == "True":
+            shuffle(choices)
         correct = []
         for _i, choice in enumerate(choices):
             if choice[0] == 1:
@@ -71,16 +70,14 @@ class Parser:
         return "choose"
 
 
-    def prepare_question(self, qdict: dict) -> Question:
+    def prepare_question(self, normal_qdict: dict, qtype: str) -> Question:
         """
         Returns a Quiz Question created with values from the qdict.
         """
-        qdict = self.normalize_qdict(qdict)
-        qtype = self.question_type(qdict)
         if qtype == "boolean":
-            correct, choices = qdict["Correct"], ["True", "False"]
+            correct, choices = normal_qdict["Correct"], ["True", "False"]
         elif qtype == "provide":
-            correct, choices = qdict["Correct"], []
+            correct, choices = normal_qdict["Correct"], []
         elif qtype == "choose":
-            correct, choices = self.prepare_choose_answers(qdict)
-        return Question(qtype, qdict["Question"], correct, choices)
+            correct, choices = self.prepare_choose_answers(normal_qdict)
+        return Question(qtype, normal_qdict["Question"], correct, choices)
