@@ -83,7 +83,7 @@ class ParserPrepareBooleanQuestion(unittest.TestCase):
 
     def setUp(self):
         parser = Parser()
-        qdict = {"Question":"Shoes before pants.", "Correct": ["True"], "Incorrect": []}
+        qdict = {"Question":"Shoes before pants.", "Correct": ["True"], "Incorrect": [], "qid": "test"}
         self.q = parser.prepare_question(qdict, "boolean")
 
     def testPrepareQsBooleanQuestionAttr(self):
@@ -100,7 +100,7 @@ class ParserPrepareProvideQuestion(unittest.TestCase):
 
     def setUp(self):
         parser = Parser()
-        qdict = {"Question":"Shoes _____ pants.", "Correct": ["before"], "Incorrect": []}
+        qdict = {"Question":"Shoes _____ pants.", "Correct": ["before"], "Incorrect": [], "qid": "test"}
         self.q = parser.prepare_question(qdict, "provide")
 
     def testPrepareQsBooleanQuestionAttr(self):
@@ -111,3 +111,17 @@ class ParserPrepareProvideQuestion(unittest.TestCase):
 
     def testPrepareQsBooleanChoicesAttr(self):
         self.assertEqual([], self.q.choices)
+
+    def testPrepareQsQidAttr(self):
+        self.assertEqual("test", self.q.qid)
+
+
+class ParserFingerprint(unittest.TestCase):
+
+    def setUp(self):
+        self.parser = Parser()
+    
+    def testFingerPrintOne(self):
+        normal_qdict = {"Question": "", "Correct": ["Two"], "Incorrect": ["Three"]}
+        expected = "9cc3161311a6c2d6ba3b3fea4cf46977"
+        self.assertEqual(expected, self.parser.fingerprint(normal_qdict))
