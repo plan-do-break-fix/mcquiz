@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from hashlib import md5
 from random import shuffle
 from typing import List, Tuple
 import yaml
@@ -69,15 +70,19 @@ class Parser:
                     return "boolean"
         return "choose"
 
-
     def prepare_question(self, normal_qdict: dict, qtype: str) -> Question:
         """
         Returns a Quiz Question created with values from the qdict.
         """
+        qid: str = normal_qdict["qid"]
         if qtype == "boolean":
             correct, choices = normal_qdict["Correct"], ["True", "False"]
         elif qtype == "provide":
             correct, choices = normal_qdict["Correct"], []
         elif qtype == "choose":
             correct, choices = self.prepare_choose_answers(normal_qdict)
-        return Question(qtype, normal_qdict["Question"], correct, choices)
+        return Question(qid, qtype, normal_qdict["Question"], correct, choices)
+
+    @staticmethod
+    def fingerprint(normal_qdict: dict) -> str:
+        return md5(normal_qdict.__repr__().encode()).hexdigest()

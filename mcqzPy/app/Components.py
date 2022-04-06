@@ -26,6 +26,7 @@ class QuizParams:
 
 @dataclass
 class Question:
+    qid: str
     qtype: str
     question: str
     correct: list[str]
