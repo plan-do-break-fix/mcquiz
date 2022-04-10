@@ -59,6 +59,6 @@ class Quiz:
                 self.view.respond_incorrect(_q)
             self.view.advance_prompt()
         n_correct = sum(self.marks)
-        self.score = n_correct * (self.max_score/len(self.questions))
+        score = n_correct * (self.max_score/len(self.questions))
         self.view.display_final(n_correct, score)
         return {"questions": self.questions, "marks": self.marks, "score": self.score}

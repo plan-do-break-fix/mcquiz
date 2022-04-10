@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 import unittest
+import sys
 
+sys.path.append("/home/jswan/mcquiz/mcqzPy/app")
 from app.Parser import Parser
 
 class ParserNormalization(unittest.TestCase):
@@ -125,3 +127,7 @@ class ParserFingerprint(unittest.TestCase):
         normal_qdict = {"Question": "", "Correct": ["Two"], "Incorrect": ["Three"]}
         expected = "9cc3161311a6c2d6ba3b3fea4cf46977"
         self.assertEqual(expected, self.parser.fingerprint(normal_qdict))
+
+
+if __name__ == "__main__":
+    unittest.main()

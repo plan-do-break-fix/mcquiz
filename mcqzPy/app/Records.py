@@ -20,7 +20,7 @@ SCHEMA = [
     "  pk INTEGER PRIMARY KEY,"\
     "  questionSet INTEGER NOT NULL,"\
     "  datetime DATETIME NOT NULL,"\
-    "  score INTEGER NOT NULL"
+    "  score INTEGER NOT NULL,"
     "  FOREIGN KEY (questionSet)"\
     "    REFERENCES questionSet (pk)"\
     "    ON DELETE CASCADE"
@@ -29,7 +29,7 @@ SCHEMA = [
     "  pk INTEGER PRIMARY KEY,"\
     "  question INTEGER NOT NULL,"\
     "  quiz INTEGER NOT NULL,"\
-    "  mark INTEGER NOT NULL"\
+    "  mark INTEGER NOT NULL,"\
     "  FOREIGN KEY (question)"\
     "    REFERENCES question (pk)"\
     "    ON DELETE CASCADE,"\
@@ -44,16 +44,19 @@ class Interface:
     def __init__(self, db_path):
         self.db = sqlite3.connect(db_path)
         self.c = self.db.cursor()
+        for _s in SCHEMA:
+            self.c.execute(f"CREATE TABLE IF NOT EXISTS {_s}")
+        self.db.commit()
 
-    def record_quiz_results(self, question_set_pk: int, timestamp: str, score: int, questions: List, marks: List) -> bool:
-        if not len(questions) == len(marks):
+    def record_quiz_results(self, question_set_pk: int, timestamp: str, score: int, questions: List, marks: List) -> int:
+        if not all([questions, marks]) or not len(questions) == len(marks):
             raise RuntimeError
         quiz_pk = self.insert_quiz(question_set_pk, timestamp, score)
         for _i, _q in enumerate(questions):
             question_pk = self.question_exists(_q.pk)
             self.insert_question_history(question_pk, quiz_pk, marks[_i])
         self.db.commit()
-        return True
+        return quiz_pk
 
     def insert_question_set(self, name: str) -> int:
         self.c.execute("INSERT INTO questionSet (name) VALUES (?)", (name,))
@@ -67,7 +70,7 @@ class Interface:
         return self.c.lastrowid
 
     def insert_quiz(self, question_set_pk: int, timestamp: str, score: int) -> int:
-        self.c.execute("INSERT INTO quiz (question_set, datetime, score) VALUES (?, ?, ?)", 
+        self.c.execute("INSERT INTO quiz (questionSet, datetime, score) VALUES (?, ?, ?)", 
                        (question_set_pk, timestamp, score))
         self.db.commit()
         return self.c.lastrowid
