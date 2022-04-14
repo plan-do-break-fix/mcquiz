@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 import unittest
+import sys
 
+sys.path.append("/home/jswan/mcquiz/mcqzPy/app")
 from app.Parser import Parser
 
 class ParserNormalization(unittest.TestCase):
@@ -83,7 +85,7 @@ class ParserPrepareBooleanQuestion(unittest.TestCase):
 
     def setUp(self):
         parser = Parser()
-        qdict = {"Question":"Shoes before pants.", "Correct": ["True"], "Incorrect": [], "qid": "test"}
+        qdict = {"Question":"Shoes before pants.", "Correct": ["True"], "Incorrect": [], "pk": "test"}
         self.q = parser.prepare_question(qdict, "boolean")
 
     def testPrepareQsBooleanQuestionAttr(self):
@@ -100,7 +102,7 @@ class ParserPrepareProvideQuestion(unittest.TestCase):
 
     def setUp(self):
         parser = Parser()
-        qdict = {"Question":"Shoes _____ pants.", "Correct": ["before"], "Incorrect": [], "qid": "test"}
+        qdict = {"Question":"Shoes _____ pants.", "Correct": ["before"], "Incorrect": [], "pk": "test"}
         self.q = parser.prepare_question(qdict, "provide")
 
     def testPrepareQsBooleanQuestionAttr(self):
@@ -112,8 +114,8 @@ class ParserPrepareProvideQuestion(unittest.TestCase):
     def testPrepareQsBooleanChoicesAttr(self):
         self.assertEqual([], self.q.choices)
 
-    def testPrepareQsQidAttr(self):
-        self.assertEqual("test", self.q.qid)
+    def testPrepareQspkAttr(self):
+        self.assertEqual("test", self.q.pk)
 
 
 class ParserFingerprint(unittest.TestCase):
@@ -125,3 +127,7 @@ class ParserFingerprint(unittest.TestCase):
         normal_qdict = {"Question": "", "Correct": ["Two"], "Incorrect": ["Three"]}
         expected = "9cc3161311a6c2d6ba3b3fea4cf46977"
         self.assertEqual(expected, self.parser.fingerprint(normal_qdict))
+
+
+if __name__ == "__main__":
+    unittest.main()

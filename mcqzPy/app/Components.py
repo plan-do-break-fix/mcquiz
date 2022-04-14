@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from random import shuffle
-from typing import List
+from typing import Dict, List
 
 LABELS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
@@ -26,7 +26,7 @@ class QuizParams:
 
 @dataclass
 class Question:
-    qid: str
+    pk: int
     qtype: str
     question: str
     correct: list[str]
@@ -39,12 +39,13 @@ class Question:
 
 class Quiz:
 
-    def __init__(self, questions: List[Question], view, params=None) -> None:
+    def __init__(self, questions: List[Question], view, max_score=1000, params=None) -> None:
         self.questions = questions
+        self.max_score = max_score
         self.marks = []
         self.view = view
     
-    def run(self):
+    def run(self) -> Dict:
         for _q in self.questions:
             self.view.clear()
             self.view.qheader(self.marks)
@@ -58,5 +59,6 @@ class Quiz:
                 self.view.respond_incorrect(_q)
             self.view.advance_prompt()
         n_correct = sum(self.marks)
-        score = n_correct * 50
+        score = n_correct * (self.max_score/len(self.questions))
         self.view.display_final(n_correct, score)
+        return {"questions": self.questions, "marks": self.marks, "score": self.score}
