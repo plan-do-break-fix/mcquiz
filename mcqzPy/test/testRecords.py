@@ -60,7 +60,7 @@ class InterfaceRecordResultsTestCase(unittest.TestCase):
         self.assertEqual(result, 1)
 
 
-class InterfaceExistssTestCase(unittest.TestCase):
+class InterfaceExistsTestCase(unittest.TestCase):
 
     def setUp(self):
         test_db = "/tmp/testRecords.sqlite.db"
@@ -74,11 +74,11 @@ class InterfaceExistssTestCase(unittest.TestCase):
         
     def testQuestionSetExistsTrue1(self):
         result = self.records.question_set_exists("Test1")
-        self.assertTrue(result)
+        self.assertEqual(1, result)
 
     def testQuestionSetExistsTrue2(self):
         result = self.records.question_set_exists("Test2")
-        self.assertTrue(result)
+        self.assertEqual(2, result)
     
     def testQuestionSetExistsFalse(self):
         result = self.records.question_set_exists("Test3")
@@ -86,11 +86,11 @@ class InterfaceExistssTestCase(unittest.TestCase):
     
     def testQuestionExistsTrueF(self):
         result = self.records.question_exists("F"*32)
-        self.assertTrue(result)
+        self.assertEqual(1, result)
 
     def testQuestionExistsTrueE(self):
         result = self.records.question_exists("E"*32)
-        self.assertTrue(result)
+        self.assertEqual(2, result)
 
     def testQuestionExistsFalse(self):
         result = self.records.question_exists("0"*32)
