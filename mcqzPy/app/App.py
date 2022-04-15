@@ -20,7 +20,7 @@ class App:
         self.bank = []
         _path = f"{os.path.expanduser('~')}/.mcqzPy"
         if not os.path.exists(_path):
-            os.makedir(_path)
+            os.mkdir(_path)
         self.records = Interface(f"{_path}/history.sqlite3.db")
 
 
@@ -50,9 +50,9 @@ class App:
     def quiz(self, count: int, max_score: int):
         view = TerminalView.View()
         qz = Quiz(self.pick(count), view)
-        timestamp = datetime.now().strptime()    ## TODO
-        result = qz.run()
-        self.records.record_quiz_results(self.q_set, timestamp, qz.score, qz.questions, qz.marks)
+        timestamp = datetime.now().strftime("%Y-%m-%d")
+        questions, marks, score = qz.run()
+        self.records.record_quiz_results(self.q_set, timestamp, score, questions, marks)
 
     ##################
     '''
