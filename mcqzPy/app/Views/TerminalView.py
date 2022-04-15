@@ -40,7 +40,7 @@ class View:
     def respond_incorrect(self, _q) -> None:
         print("\nThat is not correct! You are great disappoint.")
         if _q.qtype == "provide":
-            print(f"The correct answer is: {_q['Correct']}")
+            print(f"The correct answer is: {_q.correct}")
         elif _q.qtype == "choose":
             print(f"The correct answer is {', '.join(_q.correct)}")
 
