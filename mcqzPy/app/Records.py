@@ -53,8 +53,8 @@ class Interface:
             raise RuntimeError
         quiz_pk = self.insert_quiz(question_set_pk, timestamp, score)
         for _i, _q in enumerate(questions):
-            question_pk = self.question_exists(_q.pk)
-            self.insert_question_history(question_pk, quiz_pk, marks[_i])
+            #question_pk = self.question_exists(_q.pk)
+            self.insert_question_history(_q.pk, quiz_pk, marks[_i])
         self.db.commit()
         return quiz_pk
 
