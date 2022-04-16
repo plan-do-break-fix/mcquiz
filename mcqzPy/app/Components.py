@@ -61,4 +61,4 @@ class Quiz:
         n_correct = sum(self.marks)
         score = n_correct * (self.max_score/len(self.questions))
         self.view.display_final(n_correct, score)
-        return self.questions, self.marks, self.score
+        return self.questions, self.marks, score
